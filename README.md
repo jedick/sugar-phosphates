@@ -4,7 +4,7 @@ This repository accompanies a manuscript in preparation by D. E. LaRowe et al. (
 
 ## Installation and usage
 
-Install R and run these commands to install the development version of CHNOSZ (>= 2.0.0-13).
+Install R and run these commands to install the development version of CHNOSZ (>= 2.2.0-13).
 Note: Version 2.2.0 (the current release version on CRAN) is insufficient to run the code.
 
 ```r
