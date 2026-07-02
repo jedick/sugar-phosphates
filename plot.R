@@ -4,10 +4,10 @@
 # Developed by J. Dick and D. LaRowe, 2025-2026
 
 # Code setup
-# Use CHNOSZ >= 2.2.0-60 to calculate affinity of phosphorylation reactions 
+# Use CHNOSZ >= 2.2.0-61 to calculate affinity of phosphorylation reactions 
 # with pH-dependent speciation (see ?CHNOSZ::phosphorylate)
 library(CHNOSZ)
-if (!packageVersion("CHNOSZ") >= "2.2.0-60") stop("CHNOSZ >= 2.2.0-60 is required")
+if (!packageVersion("CHNOSZ") >= "2.2.0-61") stop("CHNOSZ >= 2.2.0-61 is required")
 
 # Data setup
 # Add updates for sugars and related species to OBIGT
@@ -15,59 +15,59 @@ inew <- add.OBIGT("sugars.csv")
 
 # Wrapper function around phospho.plot() to create a PDF for a given reaction
 # number is the reaction number (used as prefix for the plot PDF)
-plotfun <- function(reactant, P_source, number = "") {
+plotfun <- function(reactant, P_source, number = "", const_T = const_T, const_P = const_P) {
   # Setup figure
   file <- paste0(gsub(" ", "_", reactant), "+", gsub(" ", "_", P_source), ".pdf")
   if(number != "") file <- paste(number, file, sep = "_")
   pdf(file, width = 9, height = 6)
   # Make plots
-  DG <- phospho.plot(reactant, P_source)
+  DG <- phospho.plot(reactant, P_source, const_T = const_T, const_P = const_P)
   dev.off()
   # Return the reactant, P_source, and standard transformed Gibbs energy (ΔG°') at pH 7
   list(reactant, P_source, DG)
 }
 
 # High-level function to make plots for numbered reaction
-plotnum <- function(reaction) {
+plotnum <- function(reaction, const_T = const_T, const_P = const_P) {
   result <- switch(reaction,
     # Reaction 1: acetic acid + P = acetylphosphate + H2O
-    plotfun("acetic acid", "P", "01"),
+    plotfun("acetic acid", "P", "01", const_T = const_T, const_P = const_P),
     # Reaction 2: acetic acid + PP = acetylphosphate + P
-    plotfun("acetic acid", "PP", "02"),
+    plotfun("acetic acid", "PP", "02", const_T = const_T, const_P = const_P),
     # Reaction 3: ADP + acetylphosphate = ATP + acetate
-    plotfun("ADP", "acetylphosphate", "03"),
+    plotfun("ADP", "acetylphosphate", "03", const_T = const_T, const_P = const_P),
     # Reaction 4: adenosine + acetylphosphate = AMP + acetate
-    plotfun("adenosine_to_AMP", "acetylphosphate", "04"),
+    plotfun("adenosine_to_AMP", "acetylphosphate", "04", const_T = const_T, const_P = const_P),
     # Reaction 5: AMP + acetylphosphate = ADP + acetate
-    plotfun("AMP", "acetylphosphate", "05"),
+    plotfun("AMP", "acetylphosphate", "05", const_T = const_T, const_P = const_P),
     # Reaction 6: glycerol + P = 1-glycerolphosphate + H2O
-    plotfun("glycerol", "P", "06"),
+    plotfun("glycerol", "P", "06", const_T = const_T, const_P = const_P),
     # Reaction 7: glycerol + PP = 1-glycerolphosphate + P
-    plotfun("glycerol", "PP", "07"),
+    plotfun("glycerol", "PP", "07", const_T = const_T, const_P = const_P),
     # Reaction 8: uridine + PP = UMP + P
-    plotfun("uridine", "PP", "08"),
+    plotfun("uridine", "PP", "08", const_T = const_T, const_P = const_P),
     # Reaction 9: adenosine + P = cAMP + H2O
-    plotfun("adenosine_to_cAMP", "P", "09"),
+    plotfun("adenosine_to_cAMP", "P", "09", const_T = const_T, const_P = const_P),
     # Reaction 10: ribose + P = ribose-5-phosphate + H2O
-    plotfun("ribose", "P", "10"),
+    plotfun("ribose", "P", "10", const_T = const_T, const_P = const_P),
     # Reaction 11: ribose + PP = ribose-5-phosphate + P
-    plotfun("ribose", "PP", "11"),
+    plotfun("ribose", "PP", "11", const_T = const_T, const_P = const_P),
     # Reaction 12: ribose + acetylphosphate + ribose-5-phosphate + acetate
-    plotfun("ribose", "acetylphosphate", "12"),
+    plotfun("ribose", "acetylphosphate", "12", const_T = const_T, const_P = const_P),
     # Reaction 13: ribose + ATP = ribose-5-phosphate + ADP
-    plotfun("ribose", "ATP", "13"),
+    plotfun("ribose", "ATP", "13", const_T = const_T, const_P = const_P),
 
     # Other reactions (not in the table)
     # Reaction 14: adenosine + H3PO4 = AMP + H2O
-    plotfun("adenosine_to_AMP", "P", "14"),
+    plotfun("adenosine_to_AMP", "P", "14", const_T = const_T, const_P = const_P),
     # Reaction 15: AMP + ATP = ADP + ADP
-    plotfun("AMP", "ATP", "15"),
+    plotfun("AMP", "ATP", "15", const_T = const_T, const_P = const_P),
     # Reaction 16: glucose + ATP = glucose-6-phosphate + ADP
-    plotfun("glucose", "ATP", "16"),
+    plotfun("glucose", "ATP", "16", const_T = const_T, const_P = const_P),
     # Reaction 17: pyruvic acid + ATP = phosphoenolpyruvate + ADP
-    plotfun("pyruvic acid", "ATP", "17"),
+    plotfun("pyruvic acid", "ATP", "17", const_T = const_T, const_P = const_P),
     # Reaction 18: ADP + P = ATP + H2O
-    plotfun("ADP", "P", "18"),
+    plotfun("ADP", "P", "18", const_T = const_T, const_P = const_P),
   )
   if(is.null(result)) stop(paste("Reaction", reaction, "is not defined"))
   # Return the result
@@ -75,8 +75,8 @@ plotnum <- function(reaction) {
 }
 
 # Function to make plots for all reactions and save values of ΔG°'
-plotall <- function(reaction = 1:17) {
-  results <- lapply(reaction, plotnum)
+plotall <- function(reaction = 1:17, const_T = 25, const_P = "Psat") {
+  results <- lapply(reaction, plotnum, const_T = const_T, const_P = const_P)
   # Put together results in a data frame
   reactant <- sapply(results, "[[", 1)
   P_source <- sapply(results, "[[", 2)
