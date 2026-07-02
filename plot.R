@@ -1,19 +1,19 @@
 # Make T-pH and P-pH diagrams for Gibbs energy of phosphorylation reactions,
 # using mosaic() to account for pH-dependent speciation
 
-# Developed by D. LaRowe and J. Dick, 2025-2026
+# Developed by J. Dick and D. LaRowe, 2025-2026
 
 # Code setup
-# Use CHNOSZ >= 2.2.0-13 to calculate affinity of phosphorylation reactions 
+# Use CHNOSZ >= 2.2.0-60 to calculate affinity of phosphorylation reactions 
 # with pH-dependent speciation (see ?CHNOSZ::phosphorylate)
 library(CHNOSZ)
-if (!packageVersion("CHNOSZ") >= "2.2.0-13") stop("CHNOSZ >= 2.2.0-13 is required")
+if (!packageVersion("CHNOSZ") >= "2.2.0-60") stop("CHNOSZ >= 2.2.0-60 is required")
 
 # Data setup
 # Add updates for sugars and related species to OBIGT
 inew <- add.OBIGT("sugars.csv")
 
-# Wrapper function around phospho_plot() to create a PDF for a given reaction
+# Wrapper function around phospho.plot() to create a PDF for a given reaction
 # number is the reaction number (used as prefix for the plot PDF)
 plotfun <- function(reactant, P_source, number = "") {
   # Setup figure
@@ -21,7 +21,7 @@ plotfun <- function(reactant, P_source, number = "") {
   if(number != "") file <- paste(number, file, sep = "_")
   pdf(file, width = 9, height = 6)
   # Make plots
-  DG <- phospho_plot(reactant, P_source)
+  DG <- phospho.plot(reactant, P_source)
   dev.off()
   # Return the reactant, P_source, and standard transformed Gibbs energy (ΔG°') at pH 7
   list(reactant, P_source, DG)
